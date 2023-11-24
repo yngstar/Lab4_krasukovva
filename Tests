@@ -1,0 +1,69 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+[TestClass]
+public class DatabaseTests
+{
+    [TestMethod]
+    public void TestGetByID()
+    {
+        var databaseLibrary = new DatabaseLibrary(/* передайте подходящий контекст базы данных */);
+        var recordToAdd = new Record { ID = 1, Name = "TestName", Message = "TestMessage" };
+        databaseLibrary.Add(recordToAdd);
+
+        var result = databaseLibrary.GetByID(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(recordToAdd.ID, result.ID);
+        Assert.AreEqual(recordToAdd.Name, result.Name);
+        Assert.AreEqual(recordToAdd.Message, result.Message);
+
+        databaseLibrary.Delete(1);
+    }
+
+    [TestMethod]
+    public void TestGetByName()
+    {
+        var databaseLibrary = new DatabaseLibrary(/* передайте подходящий контекст базы данных */);
+        var recordToAdd = new Record { ID = 2, Name = "TestName", Message = "TestMessage" };
+        databaseLibrary.Add(recordToAdd);
+
+        var result = databaseLibrary.GetByName("TestName");
+
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.All(r => r.Name == "TestName"));
+
+        databaseLibrary.Delete(2);
+    }
+
+    [TestMethod]
+    public void TestUpdate()
+    {
+        var databaseLibrary = new DatabaseLibrary(/* передайте подходящий контекст базы данных */);
+        var recordToAdd = new Record { ID = 3, Name = "TestName", Message = "TestMessage" };
+        databaseLibrary.Add(recordToAdd);
+
+        var updatedMessage = "UpdatedTestMessage";
+        databaseLibrary.Update(3, updatedMessage);
+
+        var result = databaseLibrary.GetByID(3);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(updatedMessage, result.Message);
+
+        databaseLibrary.Delete(3);
+    }
+
+    [TestMethod]
+    public void TestDelete()
+    {
+        var databaseLibrary = new DatabaseLibrary(/* передайте подходящий контекст базы данных */);
+        var recordToAdd = new Record { ID = 4, Name = "TestName", Message = "TestMessage" };
+        databaseLibrary.Add(recordToAdd);
+
+        databaseLibrary.Delete(4);
+
+        var result = databaseLibrary.GetByID(4);
+
+        Assert.IsNull(result);
+    }
+}
