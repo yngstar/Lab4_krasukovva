@@ -1,0 +1,54 @@
+using System.Linq;
+
+public class Record
+{
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public string Message { get; set; }
+}
+
+public class DatabaseLibrary
+{
+    private readonly YourDbContext _dbContext; // замените YourDbContext на фактическое имя вашего контекста
+
+    public DatabaseLibrary(YourDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public Record GetByID(int id)
+    {
+        return _dbContext.Records.FirstOrDefault(r => r.ID == id);
+    }
+
+    public List<Record> GetByName(string name)
+    {
+        return _dbContext.Records.Where(r => r.Name == name).ToList();
+    }
+
+    public void Add(Record record)
+    {
+        _dbContext.Records.Add(record);
+        _dbContext.SaveChanges();
+    }
+
+    public void Update(int id, string newMessage)
+    {
+        var record = _dbContext.Records.FirstOrDefault(r => r.ID == id);
+        if (record != null)
+        {
+            record.Message = newMessage;
+            _dbContext.SaveChanges();
+        }
+    }
+
+    public void Delete(int id)
+    {
+        var record = _dbContext.Records.FirstOrDefault(r => r.ID == id);
+        if (record != null)
+        {
+            _dbContext.Records.Remove(record);
+            _dbContext.SaveChanges();
+        }
+    }
+}
