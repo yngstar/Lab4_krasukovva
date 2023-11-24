@@ -1,0 +1,56 @@
+using System.Net.Http;
+using HtmlAgilityPack;
+
+public class ForumParser
+{
+    private readonly DatabaseLibrary _dbLibrary;
+
+    public ForumParser(DatabaseLibrary dbLibrary)
+    {
+        _dbLibrary = dbLibrary;
+    }
+
+    public void ParseAndSaveToDatabase(string forumUrl)
+    {
+        var htmlContent = DownloadHtml(forumUrl);
+
+        var messages = ParseHtmlForMessages(htmlContent);
+
+        foreach (var message in messages)
+        {
+            var record = new Record
+            {
+                ID = message.Id,
+                Name = message.UserName,
+                Message = message.Text
+            };
+
+            _dbLibrary.Add(record);
+        }
+    }
+
+    private string DownloadHtml(string url)
+    {
+        using var httpClient = new HttpClient();
+        return httpClient.GetStringAsync(url).Result;
+    }
+
+    private List<ForumMessage> ParseHtmlForMessages(string htmlContent)
+    {
+        var messages = new List<ForumMessage>();
+
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(htmlContent);
+
+        // Реальная логика парсинга с использованием HtmlAgilityPack
+
+        return messages;
+    }
+}
+
+public class ForumMessage
+{
+    public int Id { get; set; }
+    public string UserName { get; set; }
+    public string Text { get; set; }
+}
